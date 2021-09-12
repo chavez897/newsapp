@@ -56,13 +56,27 @@ class Article {
   String content;
 
   factory Article.fromJson(Map<String, dynamic> json) => Article(
-        source: Source.fromJson(json["source"]),
+        source: json["source"] == null ? null : Source.fromJson(json["source"]),
         author: json["author"] == null ? null : json["author"],
         title: json["title"],
         description: json["description"],
         url: json["url"],
         urlToImage: json["urlToImage"],
-        publishedAt: DateTime.parse(json["publishedAt"]),
+        publishedAt: json["publishedAt"] == null
+            ? null
+            : DateTime.parse(json["publishedAt"]),
+        content: json["content"],
+      );
+  factory Article.fromDB(Map<String, dynamic> json) => Article(
+        source: json["source_name"] == null
+            ? null
+            : Source.fromDB(json["source_name"]),
+        author: null,
+        title: json["title"],
+        description: json["description"],
+        url: json["url"],
+        urlToImage: json["url_to_image"],
+        publishedAt: null,
         content: json["content"],
       );
 
@@ -90,6 +104,11 @@ class Source {
   factory Source.fromJson(Map<String, dynamic> json) => Source(
         id: json["id"] == null ? null : json["id"],
         name: json["name"],
+      );
+
+  factory Source.fromDB(String source_name) => Source(
+        id: null,
+        name: source_name,
       );
 
   Map<String, dynamic> toJson() => {

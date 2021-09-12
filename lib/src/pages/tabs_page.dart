@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:newsapp/src/pages/tab1_page.dart';
 import 'package:newsapp/src/pages/tab2_page.dart';
+import 'package:newsapp/src/pages/tab3_page.dart';
+import 'package:newsapp/src/services/dbService.dart';
 import 'package:provider/provider.dart';
 
 class TabsPage extends StatelessWidget {
@@ -31,6 +33,7 @@ class Navigation extends StatelessWidget {
         BottomNavigationBarItem(
             icon: Icon(Icons.person_outline), label: "For you"),
         BottomNavigationBarItem(icon: Icon(Icons.public), label: "Headlines"),
+        BottomNavigationBarItem(icon: Icon(Icons.save), label: "My News"),
       ],
     );
   }
@@ -50,6 +53,7 @@ class _Pages extends StatelessWidget {
       children: <Widget>[
         Tab1Page(),
         Tab2Page(),
+        Tab3Page(),
       ],
     );
   }

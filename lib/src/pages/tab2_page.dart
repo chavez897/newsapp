@@ -17,7 +17,7 @@ class Tab2Page extends StatelessWidget {
             Expanded(
                 child: (newsService.getSelectedCategoryArticle.length <= 0)
                     ? Center(child: CircularProgressIndicator())
-                    : NewsList(newsService.getSelectedCategoryArticle)),
+                    : NewsList(newsService.getSelectedCategoryArticle, false)),
           ],
         ),
       ),

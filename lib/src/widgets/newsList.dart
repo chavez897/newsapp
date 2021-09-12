@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:newsapp/src/models/newsModels.dart';
+import 'package:newsapp/src/services/dbService.dart';
 import 'package:newsapp/src/theme/theme.dart';
 
 class NewsList extends StatelessWidget {
   final List<Article> news;
+  final bool savedNews;
 
-  const NewsList(this.news);
+  const NewsList(this.news, this.savedNews);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class NewsList extends StatelessWidget {
       physics: BouncingScrollPhysics(),
       itemCount: this.news.length,
       itemBuilder: (BuildContext context, int index) {
-        return _News(news: this.news[index], index: index);
+        return _News(news: this.news[index], index: index, isSaved: savedNews);
       },
     );
   }
@@ -23,8 +25,9 @@ class NewsList extends StatelessWidget {
 class _News extends StatelessWidget {
   final Article news;
   final int index;
+  final bool isSaved;
 
-  const _News({this.news, this.index});
+  const _News({this.news, this.index, this.isSaved});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,7 @@ class _News extends StatelessWidget {
         _ImageCard(this.news),
         _BodyCard(this.news),
         SizedBox(height: 10),
-        _ButtonsCard(this.news),
+        _ButtonsCard(this.news, this.isSaved),
         Divider(),
       ],
     );
@@ -122,20 +125,15 @@ class _BodyCard extends StatelessWidget {
 
 class _ButtonsCard extends StatelessWidget {
   final Article news;
-  const _ButtonsCard(this.news);
+  final bool isSaved;
+  const _ButtonsCard(this.news, this.isSaved);
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          RawMaterialButton(
-            onPressed: () {},
-            fillColor: myTheme.accentColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            child: Icon(Icons.star_border),
-          ),
+          _SavedButtons(this.news, this.isSaved),
           SizedBox(width: 10),
           RawMaterialButton(
             onPressed: () {
@@ -163,6 +161,27 @@ class _ButtonsCard extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class _SavedButtons extends StatelessWidget {
+  final Article news;
+  final bool isSaved;
+  const _SavedButtons(this.news, this.isSaved);
+  @override
+  Widget build(BuildContext context) {
+    return RawMaterialButton(
+      onPressed: () {
+        if (this.isSaved) {
+          DBService.db.deleteNews(this.news.title);
+        } else {
+          DBService.db.insertNews(this.news);
+        }
+      },
+      fillColor: myTheme.accentColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: (this.isSaved) ? Icon(Icons.delete) : Icon(Icons.star_border),
     );
   }
 }

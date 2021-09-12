@@ -16,7 +16,7 @@ class _Tab1PageState extends State<Tab1Page>
     return Scaffold(
       body: (newsService.headlines.length <= 0)
           ? Center(child: CircularProgressIndicator())
-          : NewsList(newsService.headlines),
+          : NewsList(newsService.headlines, false),
     );
   }
 
