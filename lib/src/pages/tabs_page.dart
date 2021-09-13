@@ -30,10 +30,11 @@ class Navigation extends StatelessWidget {
       currentIndex: navigationModel.currentPage,
       onTap: (i) => navigationModel.currentPage = i,
       items: [
+        BottomNavigationBarItem(icon: Icon(Icons.star_border), label: "Top"),
         BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline), label: "For you"),
-        BottomNavigationBarItem(icon: Icon(Icons.public), label: "Headlines"),
-        BottomNavigationBarItem(icon: Icon(Icons.save), label: "My News"),
+            icon: Icon(Icons.category), label: "Categories"),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline), label: "My News"),
       ],
     );
   }

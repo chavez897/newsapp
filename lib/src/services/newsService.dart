@@ -46,8 +46,6 @@ class NewsService with ChangeNotifier {
     final resp = await http.get(url);
     final newsResponse = newsResponseFromJson(resp.body);
     this.headlines.addAll(newsResponse.articles);
-    // int result = await DBService.db.insertNews(newsResponse.articles[0]);
-    // await DBService.db.deleteNews(1);
     notifyListeners();
   }
 

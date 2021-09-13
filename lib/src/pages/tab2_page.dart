@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:newsapp/src/models/categoryModel.dart';
+import 'package:newsapp/src/services/dbService.dart';
 import 'package:newsapp/src/services/newsService.dart';
 import 'package:newsapp/src/theme/theme.dart';
 import 'package:newsapp/src/widgets/newsList.dart';
@@ -9,15 +10,20 @@ class Tab2Page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final newsService = Provider.of<NewsService>(context);
+    final dbService = Provider.of<DBService>(context);
     return SafeArea(
       child: Scaffold(
         body: Column(
           children: <Widget>[
             _CategoriesList(),
             Expanded(
-                child: (newsService.getSelectedCategoryArticle.length <= 0)
-                    ? Center(child: CircularProgressIndicator())
-                    : NewsList(newsService.getSelectedCategoryArticle, false)),
+              child: (newsService.getSelectedCategoryArticle.length <= 0)
+                  ? Center(child: CircularProgressIndicator())
+                  : NewsList(
+                      newsService.getSelectedCategoryArticle,
+                      dbService.savedTitles,
+                    ),
+            ),
           ],
         ),
       ),
