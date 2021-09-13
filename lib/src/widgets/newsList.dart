@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:newsapp/src/models/newsModels.dart';
 import 'package:newsapp/src/services/dbService.dart';
+import 'package:share/share.dart';
 
 class NewsList extends StatelessWidget {
   final List<Article> news;
@@ -80,9 +81,43 @@ class _IconsRow extends StatelessWidget {
         children: <Widget>[
           _SavedIcon(this.news, this.savedNews),
           SizedBox(width: 10),
-          Icon(Icons.share),
+          _ShareIcon(this.news),
         ],
       ),
+    );
+  }
+}
+
+class _ShareIcon extends StatelessWidget {
+  final Article news;
+  const _ShareIcon(this.news);
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Share.share('${this.news.url}');
+      },
+      child: Icon(Icons.share),
+    );
+  }
+}
+
+class _SavedIcon extends StatelessWidget {
+  final Article news;
+  final List<String> savedNews;
+  const _SavedIcon(this.news, this.savedNews);
+  @override
+  Widget build(BuildContext context) {
+    final bool isSaved = savedNews.contains(news.title);
+    return GestureDetector(
+      onTap: () {
+        if (isSaved) {
+          DBService.db.deleteNews(this.news.title);
+        } else {
+          DBService.db.insertNews(this.news);
+        }
+      },
+      child: (isSaved) ? Icon(Icons.delete) : Icon(Icons.star_border),
     );
   }
 }
@@ -155,26 +190,6 @@ class _BodyCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: Text((news.description != null) ? news.description : ''),
-    );
-  }
-}
-
-class _SavedIcon extends StatelessWidget {
-  final Article news;
-  final List<String> savedNews;
-  const _SavedIcon(this.news, this.savedNews);
-  @override
-  Widget build(BuildContext context) {
-    final bool isSaved = savedNews.contains(news.title);
-    return GestureDetector(
-      onTap: () {
-        if (isSaved) {
-          DBService.db.deleteNews(this.news.title);
-        } else {
-          DBService.db.insertNews(this.news);
-        }
-      },
-      child: (isSaved) ? Icon(Icons.delete) : Icon(Icons.star_border),
     );
   }
 }

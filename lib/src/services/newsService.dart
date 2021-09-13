@@ -10,6 +10,7 @@ import 'dbService.dart';
 final _URL_NEWS = 'https://newsapi.org/v2';
 final _API_KEY = '72492bb78d284e6badef389a803220be';
 final _COUNTRY = 'mx';
+final _PAGE_SIZE = '40';
 
 class NewsService with ChangeNotifier {
   List<Article> headlines = [];
@@ -43,7 +44,7 @@ class NewsService with ChangeNotifier {
 
   getTopHeadlines() async {
     final url = Uri.parse(
-        '$_URL_NEWS/top-headlines?country=$_COUNTRY&apiKey=$_API_KEY');
+        '$_URL_NEWS/top-headlines?country=$_COUNTRY&apiKey=$_API_KEY&pageSize=${_PAGE_SIZE}');
     final resp = await http.get(url);
     final newsResponse = newsResponseFromJson(resp.body);
     this.headlines.addAll(newsResponse.articles);
@@ -55,7 +56,7 @@ class NewsService with ChangeNotifier {
       return this.categoryArticles;
     }
     final url = Uri.parse(
-        '$_URL_NEWS/top-headlines?country=$_COUNTRY&apiKey=$_API_KEY&category=$category');
+        '$_URL_NEWS/top-headlines?country=$_COUNTRY&apiKey=$_API_KEY&category=$category&pageSize=${_PAGE_SIZE}');
     final resp = await http.get(url);
     final newsResponse = newsResponseFromJson(resp.body);
     this.categoryArticles[category].addAll(newsResponse.articles);
