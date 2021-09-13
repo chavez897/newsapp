@@ -31,6 +31,7 @@ class NewsService with ChangeNotifier {
     categories.forEach((item) {
       this.categoryArticles[item.name] = [];
     });
+    this.getArticlesByCategory(this._selectedCategory);
   }
 
   get selectedCategory => this._selectedCategory;

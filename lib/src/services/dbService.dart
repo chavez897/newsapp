@@ -12,7 +12,9 @@ class DBService with ChangeNotifier {
   List<Article> myNews = [];
   List<String> savedTitles = [];
 
-  DBService();
+  DBService() {
+    this.getNews();
+  }
 
   Future<Database> get database async {
     if (_database != null) return _database;

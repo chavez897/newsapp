@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:newsapp/src/models/newsModels.dart';
 import 'package:newsapp/src/services/dbService.dart';
-import 'package:newsapp/src/theme/theme.dart';
 
 class NewsList extends StatelessWidget {
   final List<Article> news;
@@ -33,37 +32,55 @@ class _News extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        _TopBarCard(this.news, this.index),
         _TitleCard(this.news),
         _ImageCard(this.news),
+        _SourcesCard(this.news, this.savedNews),
+        SizedBox(height: 10),
         _BodyCard(this.news),
         SizedBox(height: 10),
-        _ButtonsCard(this.news, this.savedNews),
         Divider(),
       ],
     );
   }
 }
 
-class _TopBarCard extends StatelessWidget {
+class _SourcesCard extends StatelessWidget {
   final Article news;
-  final int index;
-  const _TopBarCard(this.news, this.index);
+  final List<String> savedNews;
+  const _SourcesCard(this.news, this.savedNews);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          margin: EdgeInsets.only(bottom: 10),
+          child: Text(
+            '${news.source.name}. ',
+          ),
+        ),
+        _IconsRow(this.news, savedNews),
+      ],
+    );
+  }
+}
+
+class _IconsRow extends StatelessWidget {
+  final Article news;
+  final List<String> savedNews;
+  const _IconsRow(this.news, this.savedNews);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      margin: EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.only(right: 20),
       child: Row(
         children: <Widget>[
-          Text(
-            '${index + 1}. ',
-            style: TextStyle(color: myTheme.accentColor),
-          ),
-          Text(
-            '${news.source.name}. ',
-          ),
+          _SavedIcon(this.news, this.savedNews),
+          SizedBox(width: 10),
+          Icon(Icons.share),
         ],
       ),
     );
@@ -90,24 +107,42 @@ class _ImageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(50),
-          bottomRight: Radius.circular(50),
-        ),
+    return GestureDetector(
         child: Container(
-            child: (this.news.urlToImage != null)
-                ? FadeInImage(
-                    placeholder: AssetImage('assets/giphy.gif'),
-                    image: NetworkImage(this.news.urlToImage),
-                  )
-                : Image(
-                    image: AssetImage('assets/no-image.png'),
-                  )),
-      ),
-    );
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(50),
+              bottomRight: Radius.circular(50),
+            ),
+            child: Container(
+                child: (this.news.urlToImage != null)
+                    ? FadeInImage(
+                        placeholder: AssetImage('assets/giphy.gif'),
+                        image: NetworkImage(this.news.urlToImage),
+                      )
+                    : Image(
+                        image: AssetImage('assets/no-image.png'),
+                      )),
+          ),
+        ),
+        onTap: () {
+          FlutterWebBrowser.openWebPage(
+            url: news.url,
+            customTabsOptions: CustomTabsOptions(
+              colorScheme: CustomTabsColorScheme.dark,
+              addDefaultShareMenuItem: true,
+              instantAppsEnabled: true,
+              showTitle: true,
+              urlBarHidingEnabled: true,
+            ),
+            safariVCOptions: SafariViewControllerOptions(
+              barCollapsingEnabled: true,
+              dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
+              modalPresentationCapturesStatusBarAppearance: true,
+            ),
+          );
+        });
   }
 }
 
@@ -118,70 +153,27 @@ class _BodyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
       child: Text((news.description != null) ? news.description : ''),
     );
   }
 }
 
-class _ButtonsCard extends StatelessWidget {
+class _SavedIcon extends StatelessWidget {
   final Article news;
   final List<String> savedNews;
-  const _ButtonsCard(this.news, this.savedNews);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          _SavedButtons(this.news, this.savedNews),
-          SizedBox(width: 10),
-          RawMaterialButton(
-            onPressed: () {
-              FlutterWebBrowser.openWebPage(
-                url: news.url,
-                customTabsOptions: CustomTabsOptions(
-                  colorScheme: CustomTabsColorScheme.dark,
-                  addDefaultShareMenuItem: true,
-                  instantAppsEnabled: true,
-                  showTitle: true,
-                  urlBarHidingEnabled: true,
-                ),
-                safariVCOptions: SafariViewControllerOptions(
-                  barCollapsingEnabled: true,
-                  dismissButtonStyle:
-                      SafariViewControllerDismissButtonStyle.close,
-                  modalPresentationCapturesStatusBarAppearance: true,
-                ),
-              );
-            },
-            fillColor: Colors.blue,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            child: Icon(Icons.more),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class _SavedButtons extends StatelessWidget {
-  final Article news;
-  final List<String> savedNews;
-  const _SavedButtons(this.news, this.savedNews);
+  const _SavedIcon(this.news, this.savedNews);
   @override
   Widget build(BuildContext context) {
     final bool isSaved = savedNews.contains(news.title);
-    return RawMaterialButton(
-      onPressed: () {
+    return GestureDetector(
+      onTap: () {
         if (isSaved) {
           DBService.db.deleteNews(this.news.title);
         } else {
           DBService.db.insertNews(this.news);
         }
       },
-      fillColor: myTheme.accentColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: (isSaved) ? Icon(Icons.delete) : Icon(Icons.star_border),
     );
   }
