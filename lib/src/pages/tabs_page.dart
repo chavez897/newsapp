@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:newsapp/src/pages/tab1_page.dart';
 import 'package:newsapp/src/pages/tab2_page.dart';
 import 'package:newsapp/src/pages/tab3_page.dart';
@@ -7,6 +8,9 @@ import 'package:provider/provider.dart';
 class TabsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return ChangeNotifierProvider(
       create: (_) => _NavigationModel(),
       child: Scaffold(
