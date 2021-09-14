@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:newsapp/src/models/categoryModel.dart';
 import 'package:newsapp/src/services/dbService.dart';
 import 'package:newsapp/src/services/newsService.dart';
@@ -13,18 +14,25 @@ class Tab2Page extends StatelessWidget {
     final dbService = Provider.of<DBService>(context);
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          children: <Widget>[
-            _CategoriesList(),
-            Expanded(
-              child: (newsService.getSelectedCategoryArticle.length <= 0)
-                  ? Center(child: CircularProgressIndicator())
-                  : NewsList(
-                      newsService.getSelectedCategoryArticle,
-                      dbService.savedTitles,
-                    ),
-            ),
-          ],
+        body: LiquidPullToRefresh(
+          onRefresh: () async {
+            await newsService.refresh();
+          },
+          showChildOpacityTransition: false,
+          height: 60,
+          child: Column(
+            children: <Widget>[
+              _CategoriesList(),
+              Expanded(
+                child: (newsService.getSelectedCategoryArticle.length <= 0)
+                    ? Center(child: CircularProgressIndicator())
+                    : NewsList(
+                        newsService.getSelectedCategoryArticle,
+                        dbService.savedTitles,
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );

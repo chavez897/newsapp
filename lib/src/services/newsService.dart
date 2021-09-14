@@ -63,6 +63,16 @@ class NewsService with ChangeNotifier {
     notifyListeners();
   }
 
+  refresh() async {
+    this.headlines = [];
+    this.categoryArticles = {};
+    this.categories.forEach((item) {
+      this.categoryArticles[item.name] = [];
+    });
+    this.getTopHeadlines();
+    this.getArticlesByCategory(this._selectedCategory);
+  }
+
   List<Article> get getSelectedCategoryArticle =>
       this.categoryArticles[this._selectedCategory];
 }
