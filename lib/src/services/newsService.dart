@@ -5,8 +5,6 @@ import 'package:newsapp/src/models/newsModels.dart';
 import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'dbService.dart';
-
 final _URL_NEWS = 'https://newsapi.org/v2';
 final _API_KEY = '72492bb78d284e6badef389a803220be';
 final _COUNTRY = 'mx';

@@ -155,6 +155,9 @@ class _ImageCard extends StatelessWidget {
                     ? FadeInImage(
                         placeholder: AssetImage('assets/giphy.gif'),
                         image: NetworkImage(this.news.urlToImage),
+                        imageErrorBuilder: (context, error, stackRrace) {
+                          return Image(image: AssetImage('assets/giphy.gif'));
+                        },
                       )
                     : Image(
                         image: AssetImage('assets/no-image.png'),
